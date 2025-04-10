@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Underwater Image Super Resolution </title>
+    <style>
+        body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+                url('https://media.istockphoto.com/id/1408518230/photo/underwater-sea-deep-water-abyss-with-blue-sun-light.jpg?s=612x612&w=0&k=20&c=QuLr_03dHceNYxdZQTek2l8TzFCxbP5zZnsFNYJwo0w=');
+
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: white;
+    margin: 0;
+}
+
+
+
+        h1 {
+            color: #003153;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        input[type="file"] {
+            color: white;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #4fc3f7;
+            border-radius: 6px;
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #002147, #003366); /* Oxford Blue shades */
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #003366, #001f3f); /* Darker Oxford Blue */
+        }
+
+
+        .results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            width: 90%;
+            margin-top: 20px;
+        }
+
+        .image-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .image-container h3 {
+            color: #003153;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            max-height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .metrics {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .metric-name {
+            font-weight: bold;
+            color: #003153;
+        }
+
+        .metric-value {
+            font-family: monospace;
+        }
+
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-width: 80%;
+        }
+
+        @media (max-width: 768px) {
+            .upload-container {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            .results {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Underwater Image Super Resolution 🐟</h1>
+    
+    <div class="upload-container">
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Enhance Image</button>
+        </form>
+    </div>
+    
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    {% if original and enhanced %}
+    <div class="results">
+        <div class="image-container">
+            <h3>Original Image</h3>
+            <img src="{{ url_for('static', filename='uploads/' + original) }}">
+            <div class="metrics">
+                <div class="metric-item">
+                    <span class="metric-name">PSNR:</span>
+                    <span class="metric-value">{{ metrics.input.psnr | round(2) }} dB</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-name">SSIM:</span>
+                    <span class="metric-value">{{ metrics.input.ssim | round(4) }}</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-name">UIQM:</span>
+                    <span class="metric-value">{{ metrics.input.uiqm | round(4) }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="image-container">
+            <h3>Enhanced Image</h3>
+            <img src="{{ url_for('static', filename='results/' + enhanced) }}">
+            <div class="metrics">
+                <div class="metric-item">
+                    <span class="metric-name">PSNR:</span>
+                    <span class="metric-value">{{ metrics.output.psnr | round(2) }} dB</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-name">SSIM:</span>
+                    <span class="metric-value">{{ metrics.output.ssim | round(4) }}</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-name">UIQM:</span>
+                    <span class="metric-value">{{ metrics.output.uiqm | round(4) }}</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-name">Improvement:</span>
+                    <span class="metric-value" style="color: #4caf50;">+{{ ((metrics.output.uiqm - metrics.input.uiqm) / metrics.input.uiqm * 100) | round(2) }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
