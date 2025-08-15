@@ -58,3 +58,27 @@ This project aims to deliver **high-quality underwater image enhancement** with 
 Make sure you have the following installed:
 - **Python** (3.8+ recommended)
 - **Pip** (Python package manager)
+
+### ⚙️ Installation
+
+1. **Clone the repository**
+    ```bash
+    git clone https://github.com/SamyukthaaAnand/Underwater-Image-Super-Resolution-using-GANs
+    ```
+
+2. **Navigate to the project directory**
+    ```bash
+    cd Underwater-Image-Super-Resolution-using-GANs
+    ```
+
+3. **Install the dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+---
+
+## ▶️ Usage
+Run the project using:
+```bash
+python app.py
